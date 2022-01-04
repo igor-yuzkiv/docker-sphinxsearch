@@ -1,0 +1,47 @@
+version: '3.3'
+services:
+  #MySQL Service
+  fapi_mysql:
+    image: mysql:5.7.22
+    command: --ssl=0
+    container_name: fapi_mysql
+    restart: always
+    volumes:
+      - ./mysql/dbdata:/var/lib/mysql:z
+      - ./mysql/config/my.cnf:/etc/mysql/my.cnf:z
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_USER: fapi_user
+      MYSQL_DATABASE: fapi_database
+      MYSQL_USER_HOST: '%'
+      MYSQL_PASSWORD: ztx0JLNnLwWWNbo6
+      MYSQL_ROOT_PASSWORD: PafyJGNi247DpIW0
+    networks:
+      fapi_network:
+        ipv4_address: 172.25.0.10
+
+
+  # Sphinx Search
+  sphinxsearch:
+    container_name: sphinxsearch
+    image: sphinx:latest
+    ports:
+      - "9311:9311"
+      - "9306:9306"
+    links:
+      - fapi_mysql
+    volumes:
+      - ./sphinxsearch/config/sphinx.conf:/etc/sphinxsearch/sphinx.conf
+      - ./sphinxsearch/data:/var/lib/sphinxsearch/data
+      - ./sphinxsearch/log:/var/log/sphinxsearch
+    networks:
+      fapi_network:
+        ipv4_address: 172.25.0.11
+
+networks:
+  fapi_network:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.25.0.0/16

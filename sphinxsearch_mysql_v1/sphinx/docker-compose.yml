@@ -1,0 +1,15 @@
+version: '3.3'
+services:
+  # Sphinx Search
+  sphinxsearch:
+    container_name: sphinxsearch
+    image: sphinx:latest
+    #build:
+      #dockerfile: Dockerfile
+    ports:
+      - "9311:9311"
+      - "9306:9306"
+    volumes:
+      - ./config/sphinx.conf:/etc/sphinxsearch/sphinx.conf:z
+      - ./data:/var/lib/sphinxsearch/data:z
+      - ./log:/var/log/sphinxsearch:z
